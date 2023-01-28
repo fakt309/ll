@@ -1,7 +1,14 @@
-html, body {
+html {
   overflow: hidden;
+  width: 100%;
+}
+
+body {
   margin: 0px;
   height: 100%;
+  position: fixed;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 ::-webkit-scrollbar {
