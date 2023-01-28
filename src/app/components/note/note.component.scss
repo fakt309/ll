@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  .value {
+    flex: 1;
+    margin: 0px;
+    border: none;
+    outline: none;
+    resize: none;
+    background-color: #dddddd;
+  }
+}
