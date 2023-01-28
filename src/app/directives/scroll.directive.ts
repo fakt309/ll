@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, AfterViewInit } from '@angular/core';
+import { Directive, ElementRef, Input, AfterViewInit, HostListener } from '@angular/core';
 
 @Directive({
   selector: '[appScroll]'
@@ -13,11 +13,18 @@ export class ScrollDirective implements AfterViewInit {
     private host: ElementRef
   ) { }
 
-  genereate(el: HTMLElement): void {
+  @HostListener('window:resize') onResize(): void {
+    this.generate()
+  }
+
+  generate(): void {
+    let el: HTMLElement = this.host.nativeElement
+
+    if (el.firstChild && (el.firstChild as any)?.classList?.contains('scroll-margin')) el.firstChild.remove()
+    if (el.lastChild && (el.lastChild as any)?.classList?.contains('scroll-margin')) el.lastChild.remove()
+
     const rect = el.getBoundingClientRect()
 
-    el.style.width = rect.width+'px'
-    el.style.height = rect.height+'px'
     el.style.overflowY = 'scroll'
     el.style.display = 'flex'
     el.style.flexDirection = 'column'
@@ -38,12 +45,19 @@ export class ScrollDirective implements AfterViewInit {
     el.append(lastMargin)
 
     Array.from(el.children).forEach((child: any) => child.style.flexShrink = '0');
+  }
 
-    el.scrollTop = heightMargin
+  scrollToStart(): void {
+    const el: HTMLElement = this.host.nativeElement
+    const rect = el.getBoundingClientRect()
+    const heightMargin = rect.height-this.protrusion
+    this.host.nativeElement.scrollTop = heightMargin
   }
 
   ngAfterViewInit(): void {
-    this.genereate(this.host.nativeElement)
+    this.generate()
+    this.scrollToStart()
+
   }
 
 }
