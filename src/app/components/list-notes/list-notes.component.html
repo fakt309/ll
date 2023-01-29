@@ -1,64 +1,10 @@
 <app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
-></app-note>
-<app-note
-  *ngFor="let note of notes"
-  [value]="note.value"
+  *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
+  [note]="note"
+  [class.first]="isFirst"
+  [class.last]="isLast"
+  [focus]="focusNote"
+  (create)="createNote($event)"
+  (change)="changeNoteValue($event)"
+  (delete)="deleteNote($event)"
 ></app-note>

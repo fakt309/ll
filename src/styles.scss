@@ -11,6 +11,7 @@ body {
   height: 100%;
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
+  font-family: 'Caveat', cursive;
 }
 
 ::-webkit-scrollbar {
@@ -19,5 +20,5 @@ body {
 }
 
 textarea {
-  font-family: 'Arial';
+  font-family: 'Caveat', cursive;
 }

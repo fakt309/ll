@@ -1,14 +1,40 @@
 :host {
+  margin-bottom: 0px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  border-radius: 10px;
+
   .value {
+    padding: 20px;
+    padding-bottom: 0px;
     flex: 1;
     margin: 0px;
     border: none;
     outline: none;
     resize: none;
-    background-color: #dddddd;
+    color: #fbfb95;
+    font-size: 26px;
+    line-height: 26px;
+    background: unset;
+    height: 30px;
+  }
+
+  .value::-moz-selection {
+    color: #fbfb95;
+    background: #fbfb9533;
+  }
+
+  .value::selection {
+    color: #fbfb95;
+    background: #fbfb9533;
+  }
+}
+:host(.first) {
+}
+:host(.last) {
+  .value {
+    padding-bottom: 20px;
   }
 }

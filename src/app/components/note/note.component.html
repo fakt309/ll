@@ -1,1 +1,14 @@
-<textarea class="value" [value]="value"></textarea>
+<textarea
+  #textareaRef
+  class="value"
+  [value]="note.value"
+  autocorrect="off"
+  autocapitalize="off"
+  spellcheck="false"
+  rows="1"
+  maxlength="100"
+  (input)="onInput($event)"
+  (keydown.enter)="pressEnterNote($event)"
+  (keydown.shift.enter)="pressEnterNote($event)"
+  (keydown.backspace)="pressBackspaceNote($event)"
+></textarea>
