@@ -4,7 +4,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 10px;
+  border-bottom: 1px dashed #f5f492;
 
   .value {
     padding: 20px;
@@ -19,6 +19,9 @@
     line-height: 26px;
     background: unset;
     height: 30px;
+    transition-property: filter;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
   }
 
   .value::-moz-selection {
@@ -30,11 +33,13 @@
     color: #fbfb95;
     background: #fbfb9533;
   }
+
+  .value.disabled {
+    filter: blur(2px);
+  }
 }
 :host(.first) {
 }
 :host(.last) {
-  .value {
-    padding-bottom: 20px;
-  }
+  .value { }
 }

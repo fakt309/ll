@@ -4,7 +4,9 @@
   [class.first]="isFirst"
   [class.last]="isLast"
   [focus]="focusNote"
-  (create)="createNote($event)"
-  (change)="changeNoteValue($event)"
-  (delete)="deleteNote($event)"
+  [disabled]="focusedNote == null || focusedNote === note ? false : true"
+  (onCreate)="createNote($event)"
+  (onChange)="changeNoteValue($event)"
+  (onDelete)="deleteNote($event)"
+  (onFocus)="setFocusedNote($event)"
 ></app-note>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, OnDestroy } from '@angular/core'
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, OnDestroy, AfterViewInit, HostListener } from '@angular/core'
 import { Note } from '../../interfaces/note.interface'
 import { Subscription } from 'rxjs'
 
@@ -7,19 +7,25 @@ import { Subscription } from 'rxjs'
   templateUrl: './note.component.html',
   styleUrls: ['./note.component.scss']
 })
-export class NoteComponent implements OnInit, OnDestroy {
+export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subs: Array<Subscription> = []
   @Input() note!: Note
   @Input() focus: EventEmitter<Note> = new EventEmitter<Note>()
+  @Input() disabled: boolean = false
 
-  @Output() change: EventEmitter<{ note: Note; newValue: string }> = new EventEmitter<{ note: Note; newValue: string }>()
-  @Output() create: EventEmitter<Note> = new EventEmitter<Note>()
-  @Output() delete: EventEmitter<Note> = new EventEmitter<Note>()
+  @Output() onChange: EventEmitter<{ note: Note; newValue: string }> = new EventEmitter<{ note: Note; newValue: string }>()
+  @Output() onCreate: EventEmitter<Note> = new EventEmitter<Note>()
+  @Output() onDelete: EventEmitter<Note> = new EventEmitter<Note>()
+  @Output() onFocus: EventEmitter<{ note: Note, in: boolean, e: Event }> = new EventEmitter<{ note: Note, in: boolean, e: Event }>()
 
   @ViewChild('textareaRef', { read: ElementRef }) textareaRef!: ElementRef
 
   constructor() { }
+
+  @HostListener('window:resize') onResize(): void {
+    this.setHeightTextArea()
+  }
 
   getTextWidthFromTextarea(el: any): number {
     let value = el.value
@@ -42,6 +48,8 @@ export class NoteComponent implements OnInit, OnDestroy {
   getRowsTextareaForString(el: any): number {
     const rect = el.getBoundingClientRect()
     const style = window.getComputedStyle(el)
+    const lineHeight = 30
+    const padding = 20
 
     const textarea = document.createElement('textarea')
     textarea.value = el.value
@@ -55,13 +63,14 @@ export class NoteComponent implements OnInit, OnDestroy {
     textarea.style.outline = style.outline
 
     document.body.append(textarea)
-    const rows = textarea.scrollHeight/30
+    const rows = (textarea.scrollHeight-padding-1)/lineHeight
     textarea.remove()
 
     return Math.floor(rows)
   }
 
-  setHeightTextArea(el: any): void {
+  setHeightTextArea(): void {
+    const el = this.textareaRef.nativeElement
     const padding = 20
     const lineHeight = 28
 
@@ -73,17 +82,17 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   onInput(e: any): void {
     const el = e.target
-    this.setHeightTextArea(el)
-    this.change.emit({ note: this.note, newValue: e.target.value as string })
+    this.setHeightTextArea()
+    this.onChange.emit({ note: this.note, newValue: e.target.value as string })
   }
 
   pressEnterNote(e: Event): void {
-    this.create.emit(this.note)
+    this.onCreate.emit(this.note)
     e.preventDefault()
   }
 
   pressBackspaceNote(e: any): void {
-    if (e.target.value === '') this.delete.emit(this.note)
+    if (e.target.value === '') this.onDelete.emit(this.note)
   }
 
   ngOnInit(): void {
@@ -92,6 +101,10 @@ export class NoteComponent implements OnInit, OnDestroy {
         this.textareaRef.nativeElement.focus()
       }
     })
+  }
+
+  ngAfterViewInit(): void {
+    this.setHeightTextArea()
   }
 
   ngOnDestroy(): void {

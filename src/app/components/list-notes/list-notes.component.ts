@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, ElementRef } from '@angular/core';
 import { Note } from '../../interfaces/note.interface';
 import { UpdateNote } from '../../interfaces/update-note.interface';
 
@@ -9,7 +9,8 @@ import { UpdateNote } from '../../interfaces/update-note.interface';
 })
 export class ListNotesComponent implements OnInit {
 
-  focusNote: EventEmitter<Note> = new EventEmitter<Note>();
+  focusNote: EventEmitter<Note> = new EventEmitter<Note>()
+  focusedNote: Note | null = null
 
   notes: Array<Note> = [
     {
@@ -69,7 +70,9 @@ export class ListNotesComponent implements OnInit {
     }
   ]
 
-  constructor() { }
+  constructor(
+    private host: ElementRef
+  ) { }
 
   generateId(length: number = 16) {
       let text = '';
@@ -102,6 +105,22 @@ export class ListNotesComponent implements OnInit {
     }
     if (nextIndex !== null) {
       setTimeout(() => this.focusNote.next(this.notes[nextIndex]), 0)
+    }
+  }
+
+  setFocusedNote(change: { note: Note | null, in: boolean, e: Event }): void {
+
+    if (change.in) {
+      this.focusedNote = change.note
+      setTimeout(() => {
+        let el: any = (change.e as any).target
+        const rectWrap = this.host.nativeElement.getBoundingClientRect()
+        const rectEl = el.getBoundingClientRect()
+        this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
+      }, 10)
+
+    } else {
+      this.focusedNote = null
     }
   }
 
