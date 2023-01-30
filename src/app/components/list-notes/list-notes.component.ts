@@ -11,6 +11,7 @@ export class ListNotesComponent implements OnInit {
 
   focusNote: EventEmitter<Note> = new EventEmitter<Note>()
   focusedNote: Note | null = null
+  prevSizeWindow: number | null = null
 
   notes: Array<Note> = [
     {
@@ -75,7 +76,10 @@ export class ListNotesComponent implements OnInit {
   ) { }
 
   @HostListener('window:resize') onResize(): void {
-    (document.activeElement as any)?.blur()
+    if (this.prevSizeWindow !== null && this.prevSizeWindow > window.innerHeight) {
+      (document.activeElement as any)?.blur()
+    }
+    this.prevSizeWindow = window.innerHeight
   }
 
   generateId(length: number = 16) {
@@ -120,8 +124,13 @@ export class ListNotesComponent implements OnInit {
         let el: any = (change.e as any).target
         const rectWrap = this.host.nativeElement.getBoundingClientRect()
         const rectEl = el.getBoundingClientRect()
-        this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
-      }, 200)
+        // this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
+        this.host.nativeElement.scrollTo({
+          top: el.offsetTop-rectWrap.height/2+rectEl.height/2,
+          left: 0,
+          behavior: 'smooth'
+        })
+      }, 300)
 
     } else {
       this.focusedNote = null
@@ -139,6 +148,7 @@ export class ListNotesComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.prevSizeWindow = window.innerHeight
   }
 
 }

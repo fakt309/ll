@@ -25,17 +25,17 @@
   }
 
   .value::-moz-selection {
-    color: #fbfb95;
-    background: #fbfb9533;
+    color: #ffffff;
+    background: #ffffff33;
   }
 
   .value::selection {
-    color: #fbfb95;
-    background: #fbfb9533;
+    color: #ffffff;
+    background: #ffffff33;
   }
 
   .value.disabled {
-    filter: blur(2px);
+    filter: blur(1px);
   }
 }
 :host(.first) {
