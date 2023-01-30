@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, ElementRef } from '@angular/core';
+import { Component, OnInit, EventEmitter, ElementRef, HostListener } from '@angular/core';
 import { Note } from '../../interfaces/note.interface';
 import { UpdateNote } from '../../interfaces/update-note.interface';
 
@@ -74,6 +74,10 @@ export class ListNotesComponent implements OnInit {
     private host: ElementRef
   ) { }
 
+  @HostListener('window:resize') onResize(): void {
+    (document.activeElement as any)?.blur()
+  }
+
   generateId(length: number = 16) {
       let text = '';
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -108,7 +112,7 @@ export class ListNotesComponent implements OnInit {
     }
   }
 
-  setFocusedNote(change: { note: Note | null, in: boolean, e: Event }): void {
+  setFocusedNote(change: { note: Note | null, in: boolean, e: Event | null }): void {
 
     if (change.in) {
       this.focusedNote = change.note
@@ -117,7 +121,7 @@ export class ListNotesComponent implements OnInit {
         const rectWrap = this.host.nativeElement.getBoundingClientRect()
         const rectEl = el.getBoundingClientRect()
         this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
-      }, 10)
+      }, 200)
 
     } else {
       this.focusedNote = null

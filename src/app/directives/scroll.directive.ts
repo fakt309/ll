@@ -109,6 +109,8 @@ export class ScrollDirective implements AfterViewInit {
   generate(): void {
     let el: HTMLElement = this.host.nativeElement
 
+    const oldScrollPosition = el.scrollTop
+
     const margins = Array.from(el.querySelectorAll('.scroll-margin'))
     margins.forEach(element => element.remove());
 
@@ -170,7 +172,9 @@ export class ScrollDirective implements AfterViewInit {
     el.prepend(firstMargin)
     el.append(lastMargin)
 
-    Array.from(el.children).forEach((child: any) => child.style.flexShrink = '0');
+    Array.from(el.children).forEach((child: any) => child.style.flexShrink = '0')
+
+    el.scrollTop = oldScrollPosition
   }
 
   scrollToStart(): void {

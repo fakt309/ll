@@ -48,22 +48,23 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   getRowsTextareaForString(el: any): number {
     const rect = el.getBoundingClientRect()
     const style = window.getComputedStyle(el)
-    const lineHeight = 30
-    const padding = 20
+    const lineHeight = 20
+    const padding = 10
 
     const textarea = document.createElement('textarea')
     textarea.value = el.value
     textarea.style.position = 'fixed'
     textarea.style.width = style.width
-    textarea.style.height = '30px'
+    textarea.style.height = '24px'
     textarea.style.fontSize = style.fontSize
+    textarea.style.fontWeight = style.fontWeight
     textarea.style.fontFamily = style.fontFamily
     textarea.style.padding = style.padding
     textarea.style.border = style.border
     textarea.style.outline = style.outline
 
     document.body.append(textarea)
-    const rows = (textarea.scrollHeight-padding-1)/lineHeight
+    const rows = (textarea.scrollHeight-2*padding)/lineHeight
     textarea.remove()
 
     return Math.floor(rows)
@@ -71,13 +72,13 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setHeightTextArea(): void {
     const el = this.textareaRef.nativeElement
-    const padding = 20
-    const lineHeight = 28
+    const padding = 10
+    const lineHeight = 20
 
     const rect = el.getBoundingClientRect()
     let rows = this.getRowsTextareaForString(el)
 
-    el.style.height = `${ rows < 2 ? 30 : lineHeight*rows}px`
+    el.style.height = `${ rows < 2 ? 24 : lineHeight*rows}px`
   }
 
   onInput(e: any): void {
@@ -89,6 +90,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   pressEnterNote(e: Event): void {
     this.onCreate.emit(this.note)
     e.preventDefault()
+    e.stopPropagation()
   }
 
   pressBackspaceNote(e: any): void {

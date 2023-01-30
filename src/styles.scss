@@ -11,7 +11,9 @@ body {
   height: 100%;
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
-  font-family: 'Caveat', cursive;
+  //font-family: Ubuntu, sans-serif;
+  // font-family: 'Caveat', cursive;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -20,5 +22,7 @@ body {
 }
 
 textarea {
-  font-family: 'Caveat', cursive;
+  //font-family: Ubuntu, sans-serif;
+  // font-family: 'Caveat', cursive;
+  font-family: 'Noto Sans', sans-serif;
 }
