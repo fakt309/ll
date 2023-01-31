@@ -82,6 +82,12 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onInput(e: any): void {
+    if (e.insertLineBreak === 'insertLineBreak') {
+      this.pressEnterNote(e)
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
     const el = e.target
     this.setHeightTextArea()
     this.onChange.emit({ note: this.note, newValue: e.target.value as string })
