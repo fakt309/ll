@@ -49,7 +49,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const rect = el.getBoundingClientRect()
     const style = window.getComputedStyle(el)
     const lineHeight = 20
-    const padding = 10
+    const padding = 20
 
     const textarea = document.createElement('textarea')
     textarea.value = el.value
@@ -72,7 +72,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setHeightTextArea(): void {
     const el = this.textareaRef.nativeElement
-    const padding = 10
+    const padding = 20
     const lineHeight = 20
 
     const rect = el.getBoundingClientRect()
