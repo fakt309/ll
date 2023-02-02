@@ -14,3 +14,7 @@
   (onDelete)="deleteNote($event)"
   (onFocus)="setFocusedNote($event)"
 ></app-note>
+
+<div
+  *ngIf="notes.length === 0"
+  class="none-notes">tap to create note</div>

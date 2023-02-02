@@ -181,7 +181,12 @@ export class ScrollDirective implements AfterViewInit {
     const el: HTMLElement = this.host.nativeElement
     const rect = el.getBoundingClientRect()
     const heightMargin = rect.height-this.protrusion
-    this.host.nativeElement.scrollTop = heightMargin
+    const heightContent = el.scrollHeight-2*heightMargin
+    if (el.scrollHeight < 2*heightMargin+rect.height) {
+      this.host.nativeElement.scrollTop = heightMargin-rect.height/2+heightContent/2
+    } else {
+      this.host.nativeElement.scrollTop = heightMargin
+    }
   }
 
   rotateRefresh(): void {

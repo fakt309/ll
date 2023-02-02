@@ -18,13 +18,114 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() onCreate: EventEmitter<Note> = new EventEmitter<Note>()
   @Output() onDelete: EventEmitter<Note> = new EventEmitter<Note>()
   @Output() onFocus: EventEmitter<{ note: Note, in: boolean, e: Event }> = new EventEmitter<{ note: Note, in: boolean, e: Event }>()
+  touch: { startX: number | null; startY: number | null; prevX: number | null; prevY: number | null; down: boolean; startElement: any; canDraw: boolean; firstMove: boolean; pathD: Array<Array<number>>, viewBox: Array<number>, doAction: boolean } = {
+    startX: null,
+    startY: null,
+    prevX: null,
+    prevY: null,
+    down: false,
+    startElement: null,
+    canDraw: false,
+    firstMove: true,
+    pathD: [],
+    viewBox: [0, 0, 0, 0],
+    doAction: false
+  }
 
   @ViewChild('textareaRef', { read: ElementRef }) textareaRef!: ElementRef
+  @ViewChild('svgRef', { read: ElementRef }) svgRef!: ElementRef
 
-  constructor() { }
+  constructor(
+    private host: ElementRef
+  ) { }
 
   @HostListener('window:resize') onResize(): void {
     this.setHeightTextArea()
+  }
+
+  @HostListener('touchstart', ['$event']) onTouchStart(e: any): void {
+    let { x, y } = this.getCoordFromTouch(e)
+    this.touch.startX = x
+    this.touch.startY = y
+    this.touch.down = true
+    this.touch.canDraw = true
+    this.touch.firstMove = true
+    const rect = this.host.nativeElement.getBoundingClientRect()
+    this.touch.pathD.push([x-rect.x, y-rect.y])
+    this.touch.viewBox = [0, 0, rect.width, rect.height]
+  }
+
+  @HostListener('touchmove', ['$event']) onTouchMove(e: any): void {
+
+    let { x, y } = this.getCoordFromTouch(e)
+
+    if (this.touch.firstMove) {
+      if (Math.abs(x - this.touch.startX!) < Math.abs(y - this.touch.startY!) || x - this.touch.startX! < 0) {
+        this.touch.canDraw = false
+      }
+      this.touch.firstMove = false
+    }
+
+    if (!this.touch.canDraw) return
+
+    const rect = this.host.nativeElement.getBoundingClientRect()
+    const prev = {
+      x: this.touch.prevX !== null ? this.touch.prevX-rect.x : this.touch.startX!-rect.x,
+      y: this.touch.prevY !== null ? this.touch.prevY-rect.y : this.touch.startY!-rect.y
+    }
+    this.touch.pathD.push([x-rect.x, y-rect.y])
+
+    if (this.touch.prevX && x < this.touch.prevX) {
+      this.touch.pathD = this.cleanPath([...this.touch.pathD], x)
+    }
+
+    if (x-this.touch.pathD[0][0] > 80) {
+      this.touch.doAction = true
+    } else {
+      this.touch.doAction = false
+    }
+
+    this.touch.prevX = x
+    this.touch.prevY = y
+  }
+
+  @HostListener('touchend', ['$event']) onTouchEnd(e: any): void {
+    this.touch.startX = 0
+    this.touch.startY = 0
+    this.touch.down = false
+    this.touch.canDraw = false
+    this.touch.startElement = null
+    this.touch.firstMove = false
+    this.touch.prevX = null
+    this.touch.prevY = null
+    this.touch.pathD = []
+
+    if (this.touch.doAction) {
+      this.onDelete.emit(this.note)
+    }
+  }
+
+  cleanPath(path: Array<Array<number>>, limit: number): Array<Array<number>> {
+    for (let i = 0; i < path.length; i++) {
+      if (path[i][0] > limit) path.splice(i, 1)
+    }
+    return path
+  }
+
+  getStringPath(path: Array<Array<number>>): string {
+    if (!path[0] || !path[0][0]) return ''
+    let answer = `M ${path[0][0]} ${path[0][1]}`
+    for (let i = 1; i < path.length; i++) {
+      answer += ` C ${path[i-1][0]} ${path[i-1][1]}, ${path[i-1][0]} ${path[i-1][1]} ${path[i][0]} ${path[i][1]}`
+    }
+    return answer
+  }
+
+  getCoordFromTouch(e: TouchEvent): { x: number; y: number } {
+    return {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    }
   }
 
   getTextWidthFromTextarea(el: any): number {

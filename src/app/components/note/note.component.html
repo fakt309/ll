@@ -14,4 +14,21 @@
   (keydown.enter)="pressEnterNote($event)"
   (keydown.shift.enter)="pressEnterNote($event)"
   (keydown.backspace)="pressBackspaceNote($event)"
+  [style.opacity]="touch.doAction ? '0.5' : '1'"
 ></textarea>
+
+<svg
+  #svgRef
+  *ngIf="touch.canDraw"
+  class="svg"
+  [attr.viewBox]="touch.viewBox[0]+' '+touch.viewBox[1]+' '+touch.viewBox[2]+' '+touch.viewBox[3]"
+  xmlns="http://www.w3.org/2000/svg"
+  >
+  <path
+    class="first-line"
+    [attr.d]="getStringPath(touch.pathD)"
+    stroke="#ffffff"
+    stroke-width="4"
+    stroke-linecap="round"
+    fill="transparent"></path>
+</svg>
