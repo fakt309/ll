@@ -184,10 +184,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onInput(e: any): void {
-    // console.log(e)
-    // console.log(e.inputType === 'insertCompositionText', e.data === null)
     if (e.inputType === 'insertCompositionText' && e.data === null) {
-      // console.log('let it be')
       this.pressEnterNote(e)
       e.preventDefault()
       e.stopPropagation()
@@ -196,12 +193,13 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const el = e.target
     const val = e.target.value.replace(/\n/g, '')
     this.onChange.emit({ note: this.note, newValue: val as string })
-    // console.log(val)
     e.target.value = val
     this.setHeightTextArea()
   }
 
   pressEnterNote(e: any): void {
+    console.log(e.target)
+    console.log(e.target.selectionStart)
     if (e.target.selectionStart === 0) {
       this.onCreate.emit({ note: this.note, before: true })
     } else {
@@ -220,7 +218,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onDelete.emit({ note: this.note })
       return
     }
-    
+
     if (e.target.selectionStart === 0) {
       this.onDelete.emit({ note: this.note, withAddToPrev: e.target.value })
       return
