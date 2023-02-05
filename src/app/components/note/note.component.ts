@@ -185,14 +185,16 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onInput(e: any): void {
     console.log(e)
+    console.log(e.inputType === 'insertCompositionText', e.data === null)
     if (e.inputType === 'insertCompositionText' && e.data === null) {
+      console.log('let it be')
       this.pressEnterNote(e)
       e.preventDefault()
       e.stopPropagation()
       return
     }
     const el = e.target
-    const val = e.target.value.replace(/\s+/g, ' ').trim()
+    const val = e.target.value.replace(/\n/g, '').trim()
     this.onChange.emit({ note: this.note, newValue: val as string })
     console.log(val)
     e.target.value = val
