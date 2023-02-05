@@ -183,6 +183,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onInput(e: any): void {
+    console.log(e)
     if (e.insertLineBreak === 'insertLineBreak') {
       this.pressEnterNote(e)
       e.preventDefault()

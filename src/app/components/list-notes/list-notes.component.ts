@@ -221,17 +221,17 @@ export class ListNotesComponent implements OnInit {
 
     if (change.in) {
       this.focusedNote = change.note
-      setTimeout(() => {
-        let el: any = (change.e as any).target
-        const rectWrap = this.host.nativeElement.getBoundingClientRect()
-        const rectEl = el.getBoundingClientRect()
-        // this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
-        this.host.nativeElement.scrollTo({
-          top: el.offsetTop-rectWrap.height/2+rectEl.height/2,
-          left: 0,
-          behavior: 'smooth'
-        })
-      }, 300)
+      // setTimeout(() => {
+      //   let el: any = (change.e as any).target
+      //   const rectWrap = this.host.nativeElement.getBoundingClientRect()
+      //   const rectEl = el.getBoundingClientRect()
+      //   // this.host.nativeElement.scrollTop = el.offsetTop-rectWrap.height/2+rectEl.height/2
+      //   this.host.nativeElement.scrollTo({
+      //     top: el.offsetTop-rectWrap.height/2+rectEl.height/2,
+      //     left: 0,
+      //     behavior: 'smooth'
+      //   })
+      // }, 300)
 
     } else {
       this.focusedNote = null
