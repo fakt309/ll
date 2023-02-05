@@ -11,14 +11,14 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subs: Array<Subscription> = []
   @Input() note!: Note
-  @Input() focus: EventEmitter<Note> = new EventEmitter<Note>()
+  @Input() focus: EventEmitter<{ note: Note, position: number }> = new EventEmitter<{ note: Note, position: number }>()
   @Input() value: EventEmitter<string> = new EventEmitter<string>()
   @Input() disabled: boolean = false
 
   @Output() onChange: EventEmitter<{ note: Note; newValue: string }> = new EventEmitter<{ note: Note; newValue: string }>()
-  @Output() onCreate: EventEmitter<Note> = new EventEmitter<Note>()
-  @Output() onDelete: EventEmitter<Note> = new EventEmitter<Note>()
-  @Output() onFocus: EventEmitter<{ note: Note, in: boolean, e: Event }> = new EventEmitter<{ note: Note, in: boolean, e: Event }>()
+  @Output() onCreate: EventEmitter<{ note?: Note; before?: boolean; withValue?: string }> = new EventEmitter<{ note?: Note; before?: boolean; withValue?: string }>()
+  @Output() onDelete: EventEmitter<{ note: Note, withAddToPrev?: string }> = new EventEmitter<{ note: Note, withAddToPrev?: string }>()
+  @Output() onFocus: EventEmitter<{ note: Note; in: boolean; e: Event }> = new EventEmitter<{ note: Note, in: boolean, e: Event }>()
   touch: { startX: number | null; startY: number | null; prevX: number | null; prevY: number | null; down: boolean; startElement: any; canDraw: boolean; firstMove: boolean; pathD: Array<Array<number>>, viewBox: Array<number>, doAction: boolean } = {
     startX: null,
     startY: null,
@@ -102,7 +102,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     this.touch.pathD = []
 
     if (this.touch.doAction) {
-      this.onDelete.emit(this.note)
+      this.onDelete.emit({ note: this.note })
     }
   }
 
@@ -184,37 +184,55 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onInput(e: any): void {
-    console.log(e)
-    console.log(e.inputType === 'insertCompositionText', e.data === null)
+    // console.log(e)
+    // console.log(e.inputType === 'insertCompositionText', e.data === null)
     if (e.inputType === 'insertCompositionText' && e.data === null) {
-      console.log('let it be')
+      // console.log('let it be')
       this.pressEnterNote(e)
       e.preventDefault()
       e.stopPropagation()
       return
     }
     const el = e.target
-    const val = e.target.value.replace(/\n/g, '').trim()
+    const val = e.target.value.replace(/\n/g, '')
     this.onChange.emit({ note: this.note, newValue: val as string })
-    console.log(val)
+    // console.log(val)
     e.target.value = val
     this.setHeightTextArea()
   }
 
-  pressEnterNote(e: Event): void {
-    this.onCreate.emit(this.note)
+  pressEnterNote(e: any): void {
+    if (e.target.selectionStart === 0) {
+      this.onCreate.emit({ note: this.note, before: true })
+    } else {
+      const stringBefore = e.target.value.slice(0, e.target.selectionStart).trim()
+      const stringAfter = e.target.value.slice(e.target.selectionStart).trim()
+      this.onChange.emit({ note: this.note, newValue: stringBefore as string })
+      e.target.value = stringBefore
+      this.onCreate.emit({ note: this.note, before: false, withValue: stringAfter })
+    }
     e.preventDefault()
     e.stopPropagation()
   }
 
   pressBackspaceNote(e: any): void {
-    if (e.target.value === '') this.onDelete.emit(this.note)
+    if (e.target.value === '') {
+      this.onDelete.emit({ note: this.note })
+      return
+    }
+    
+    if (e.target.selectionStart === 0) {
+      this.onDelete.emit({ note: this.note, withAddToPrev: e.target.value })
+      return
+    }
   }
 
   ngOnInit(): void {
-    this.focus.subscribe((note: Note) => {
-      if (this.note.id === note.id) {
+    this.focus.subscribe((data: { note: Note, position: number }) => {
+      if (this.note.id === data.note.id) {
         this.textareaRef.nativeElement.focus()
+        this.textareaRef.nativeElement.selectionStart = data.position
+        this.textareaRef.nativeElement.selectionEnd = data.position
       }
     })
   }

@@ -10,7 +10,7 @@ import { NoteService } from '../../services/note.service'
 })
 export class ListNotesComponent implements OnInit {
 
-  focusNote: EventEmitter<Note> = new EventEmitter<Note>()
+  focusNote: EventEmitter<{ note: Note, position: number }> = new EventEmitter<{ note: Note, position: number }>()
   setNote: EventEmitter<Note> = new EventEmitter<Note>()
   focusedNote: Note | null = null
   prevSizeWindow: number | null = null
@@ -184,27 +184,31 @@ export class ListNotesComponent implements OnInit {
       return -1*Math.floor(Math.random()*(10**9));
   }
 
-  createNote(note?: Note): void {
+  createNote(data?: { note?: Note, before?: boolean, withValue?: string }): void {
     const newNote: Note = {
       id: this.generateId(),
-      value: '',
+      value: data && data.withValue ? data.withValue : '',
       status: 'notDone',
       updateList: [],
       createTimestamp: 0
     }
-    if (!note) {
+    if (!data || !data.note) {
       this.notes.push(newNote)
       this.noteService.create(newNote)
-    } else {
-      const index = this.notes.indexOf(note)
+    } else if (!data.before) {
+      const index = this.notes.indexOf(data.note)
       this.notes.splice(index+1, 0, newNote)
       this.noteService.create(newNote, index+1)
+    } else {
+      const index = this.notes.indexOf(data.note)
+      this.notes.splice(index, 0, newNote)
+      this.noteService.create(newNote, index)
     }
-    setTimeout(() => this.focusNote.next(newNote), 0)
+    setTimeout(() => this.focusNote.next({ note: newNote, position: 0 }), 0)
   }
 
-  deleteNote(note: Note): void {
-    const index = this.notes.indexOf(note)
+  deleteNote(data: { note: Note, withAddToPrev?: string }): void {
+    const index = this.notes.indexOf(data.note)
     this.notes.splice(index, 1)
     let nextIndex: any = null
     if (this.notes[index-1]) {
@@ -212,10 +216,21 @@ export class ListNotesComponent implements OnInit {
     } else if (this.notes[index]) {
       nextIndex = index
     }
-    this.noteService.delete(note)
-    if (nextIndex !== null) {
-      setTimeout(() => this.focusNote.next(this.notes[nextIndex]), 0)
+    if (data.withAddToPrev && this.notes[index-1]) {
+      const position = this.notes[index-1].value.length
+      this.notes[index-1].value += ' '+data.withAddToPrev
+      this.noteService.update(this.notes[index-1])
+      this.noteService.delete(data.note)
+      if (nextIndex !== null) {
+        setTimeout(() => this.focusNote.next({ note: this.notes[nextIndex], position: position }), 0)
+      }
+    } else {
+      this.noteService.delete(data.note)
+      if (nextIndex !== null) {
+        setTimeout(() => this.focusNote.next({ note: this.notes[nextIndex], position: this.notes[nextIndex].value.length }), 0)
+      }
     }
+
   }
 
   setFocusedNote(change: { note: Note | null, in: boolean, e: Event | null }): void {
