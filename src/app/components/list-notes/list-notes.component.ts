@@ -242,6 +242,7 @@ export class ListNotesComponent implements OnInit {
     if (!change || !change.note || !change.newValue) return
 
     change.note.value = change.newValue
+    change.note = {...change.note}
 
     this.noteService.update(change.note)
   }
