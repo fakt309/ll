@@ -191,8 +191,9 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
       return
     }
     const el = e.target
+    const val = e.target.value.replace(/\s+/g, ' ').trim()
     this.setHeightTextArea()
-    this.onChange.emit({ note: this.note, newValue: e.target.value as string })
+    this.onChange.emit({ note: this.note, newValue: val as string })
   }
 
   pressEnterNote(e: Event): void {
