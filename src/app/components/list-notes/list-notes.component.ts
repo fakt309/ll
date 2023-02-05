@@ -11,6 +11,7 @@ import { NoteService } from '../../services/note.service'
 export class ListNotesComponent implements OnInit {
 
   focusNote: EventEmitter<Note> = new EventEmitter<Note>()
+  setNote: EventEmitter<Note> = new EventEmitter<Note>()
   focusedNote: Note | null = null
   prevSizeWindow: number | null = null
 
@@ -242,7 +243,6 @@ export class ListNotesComponent implements OnInit {
     if (!change || !change.note || !change.newValue) return
 
     change.note.value = change.newValue
-    change.note = {...change.note}
 
     this.noteService.update(change.note)
   }

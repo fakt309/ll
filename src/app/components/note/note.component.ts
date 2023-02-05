@@ -12,6 +12,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   subs: Array<Subscription> = []
   @Input() note!: Note
   @Input() focus: EventEmitter<Note> = new EventEmitter<Note>()
+  @Input() value: EventEmitter<string> = new EventEmitter<string>()
   @Input() disabled: boolean = false
 
   @Output() onChange: EventEmitter<{ note: Note; newValue: string }> = new EventEmitter<{ note: Note; newValue: string }>()
@@ -192,8 +193,9 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const el = e.target
     const val = e.target.value.replace(/\s+/g, ' ').trim()
-    console.log(val)
     this.onChange.emit({ note: this.note, newValue: val as string })
+    console.log(val)
+    e.target.value = val
     this.setHeightTextArea()
   }
 
