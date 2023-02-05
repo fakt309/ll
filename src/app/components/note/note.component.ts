@@ -184,6 +184,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onInput(e: any): void {
+    console.log(e)
     if (e.inputType === 'insertCompositionText' && e.data === null) {
       this.pressEnterNote(e)
       e.preventDefault()
@@ -198,6 +199,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   pressEnterNote(e: any): void {
+    console.log(e)
     console.log(e.target)
     console.log(e.target.selectionStart)
     if (e.target.selectionStart === 0) {
