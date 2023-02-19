@@ -10,16 +10,17 @@ import { Subscription } from 'rxjs'
 export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subs: Array<Subscription> = []
-  @Input() note!: Note
-  @Input() focus: EventEmitter<{ note: Note, position: number }> = new EventEmitter<{ note: Note, position: number }>()
-  @Input() value: EventEmitter<string> = new EventEmitter<string>()
-  @Input() disabled: boolean = false
 
-  @Output() onChange: EventEmitter<{ note: Note; newValue: string }> = new EventEmitter<{ note: Note; newValue: string }>()
-  @Output() onCreate: EventEmitter<{ note?: Note; before?: boolean; withValue?: string }> = new EventEmitter<{ note?: Note; before?: boolean; withValue?: string }>()
-  @Output() onDelete: EventEmitter<{ note: Note, withAddToPrev?: string }> = new EventEmitter<{ note: Note, withAddToPrev?: string }>()
-  @Output() onFocus: EventEmitter<{ note: Note; in: boolean; e: Event }> = new EventEmitter<{ note: Note, in: boolean, e: Event }>()
-  touch: { startX: number | null; startY: number | null; prevX: number | null; prevY: number | null; down: boolean; startElement: any; canDraw: boolean; firstMove: boolean; pathD: Array<Array<number>>, viewBox: Array<number>, doAction: boolean } = {
+  @Input() id!: number
+  @Input() value!: string
+  @Input() focus: EventEmitter<{ id: number; position: number }> = new EventEmitter<{ id: number; position: number }>()
+
+  @Output() onWasChangedValue: EventEmitter<{ id: number; newValue: string }> = new EventEmitter<{ id: number; newValue: string }>()
+  @Output() onCreate: EventEmitter<{ fromId: number; direction: 'prev' | 'next'; values: Array<string> }> = new EventEmitter<{ fromId: number; direction: 'prev' | 'next'; values: Array<string> }>()
+  @Output() onDelete: EventEmitter<{ id: number, by: 'delete' | 'backspace' | 'finger' }> = new EventEmitter<{ id: number, by: 'delete' | 'backspace' | 'finger' }>()
+  @Output() onMerge: EventEmitter<{ fromId: number, direction: 'prev' | 'next' }> = new EventEmitter<{ fromId: number, direction: 'prev' | 'next' }>()
+
+  touch: { startX: number | null; startY: number | null; prevX: number | null; prevY: number | null; down: boolean; startElement: any; canDraw: boolean; firstMove: boolean; pathD: Array<Array<number>>, viewBox: Array<number>, doDelete: boolean } = {
     startX: null,
     startY: null,
     prevX: null,
@@ -30,7 +31,7 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     firstMove: true,
     pathD: [],
     viewBox: [0, 0, 0, 0],
-    doAction: false
+    doDelete: false
   }
 
   @ViewChild('textareaRef', { read: ElementRef }) textareaRef!: ElementRef
@@ -81,9 +82,9 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (x-this.touch.pathD[0][0] > 80) {
-      this.touch.doAction = true
+      this.touch.doDelete = true
     } else {
-      this.touch.doAction = false
+      this.touch.doDelete = false
     }
 
     this.touch.prevX = x
@@ -101,8 +102,8 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     this.touch.prevY = null
     this.touch.pathD = []
 
-    if (this.touch.doAction) {
-      this.onDelete.emit({ note: this.note })
+    if (this.touch.doDelete) {
+      this.onDelete.emit({ id: this.id, by: 'finger' })
     }
   }
 
@@ -127,24 +128,6 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
       x: e.touches[0].clientX,
       y: e.touches[0].clientY
     }
-  }
-
-  getTextWidthFromTextarea(el: any): number {
-    let value = el.value
-    const style = window.getComputedStyle(el)
-
-    let span = document.createElement('span')
-    span.innerHTML = el.value
-    span.style.fontSize = style.fontSize
-    span.style.fontFamily = style.fontFamily
-    span.style.position = 'absolute'
-    span.style.whiteSpace = 'nowrap'
-
-    document.body.append(span)
-    const width = span.getBoundingClientRect().width
-    span.remove()
-
-    return width
   }
 
   getRowsTextareaForString(el: any): number {
@@ -183,58 +166,87 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     el.style.height = `${ rows < 2 ? 24 : lineHeight*rows}px`
   }
 
-  onInput(e: any): void {
-    console.log(e)
-    if (e.inputType === 'insertCompositionText' && e.data === null) {
-      this.pressEnterNote(e)
-      e.preventDefault()
-      e.stopPropagation()
-      return
-    }
-    const el = e.target
-    const val = e.target.value.replace(/\n/g, '')
-    this.onChange.emit({ note: this.note, newValue: val as string })
-    e.target.value = val
-    this.setHeightTextArea()
-  }
+  onInput(e: Event): void {
+    const el = this.textareaRef.nativeElement
+    const value = el.value as string
 
-  pressEnterNote(e: any): void {
-    console.log(e)
-    console.log(e.target)
-    console.log(e.target.selectionStart)
-    if (e.target.selectionStart === 0) {
-      this.onCreate.emit({ note: this.note, before: true })
+    const valueSplitByEnter = value.split('\n')
+
+    if (valueSplitByEnter[0] === '' && valueSplitByEnter[1] !== '' && valueSplitByEnter.length == 2) {
+      this.onWasChangedValue.emit({
+        id: this.id,
+        newValue: valueSplitByEnter[1]
+      })
+      el.value = valueSplitByEnter[1]
+
+      this.onCreate.emit({
+        fromId: this.id,
+        direction: 'prev',
+        values: ['']
+      })
     } else {
-      const stringBefore = e.target.value.slice(0, e.target.selectionStart).trim()
-      const stringAfter = e.target.value.slice(e.target.selectionStart).trim()
-      this.onChange.emit({ note: this.note, newValue: stringBefore as string })
-      e.target.value = stringBefore
-      this.onCreate.emit({ note: this.note, before: false, withValue: stringAfter })
+      this.onWasChangedValue.emit({
+        id: this.id,
+        newValue: valueSplitByEnter[0]
+      })
+      el.value = valueSplitByEnter[0]
+
+      if (valueSplitByEnter.length > 1) {
+        this.onCreate.emit({
+          fromId: this.id,
+          direction: 'next',
+          values: valueSplitByEnter.slice(1)
+        })
+      }
     }
+
     e.preventDefault()
     e.stopPropagation()
   }
 
-  pressBackspaceNote(e: any): void {
-    if (e.target.value === '') {
-      this.onDelete.emit({ note: this.note })
-      return
+  onKeydown(e: any): void {
+    const el = this.textareaRef.nativeElement
+    const value = el.value as string
+
+    if (e.keyCode === 8 || e.keyCode === 46) {
+      if (value === '') {
+        this.onDelete.emit({ id: this.id, by: e.keyCode === 8 ? 'backspace' : 'delete' })
+        e.preventDefault()
+        e.stopPropagation()
+      } else {
+        const position = el.selectionStart
+        if (position === 0 && e.keyCode === 8) {
+          this.onMerge.emit({
+            fromId: this.id,
+            direction: 'prev'
+          })
+          e.preventDefault()
+          e.stopPropagation()
+        } else if (position === value.length  && e.keyCode === 46) {
+          this.onMerge.emit({
+            fromId: this.id,
+            direction: 'next'
+          })
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }
     }
 
-    if (e.target.selectionStart === 0) {
-      this.onDelete.emit({ note: this.note, withAddToPrev: e.target.value })
-      return
-    }
+    this.setHeightTextArea()
+
   }
 
   ngOnInit(): void {
-    this.focus.subscribe((data: { note: Note, position: number }) => {
-      if (this.note.id === data.note.id) {
-        this.textareaRef.nativeElement.focus()
-        this.textareaRef.nativeElement.selectionStart = data.position
-        this.textareaRef.nativeElement.selectionEnd = data.position
-      }
-    })
+    this.subs.push(
+      this.focus.subscribe((data: { id: number, position: number }) => {
+        if (this.id === data.id) {
+          this.textareaRef.nativeElement.focus()
+          this.textareaRef.nativeElement.selectionStart = data.position
+          this.textareaRef.nativeElement.selectionEnd = data.position
+        }
+      })
+    )
   }
 
   ngAfterViewInit(): void {

@@ -1,9 +1,7 @@
-import { UpdateNote } from './update-note.interface';
-
 export interface Note {
   id: number
+  createTimestamp?: number
   value: string
-  status: 'notDone' | 'done'
-  updateList: Array<UpdateNote>
-  createTimestamp: number
+  status: 'active' | 'done' | 'canceled'
+  priority: number
 }

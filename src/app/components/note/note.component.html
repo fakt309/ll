@@ -1,4 +1,4 @@
-<textarea
+<!-- <textarea
   #textareaRef
   class="value"
   [value]="note.value"
@@ -15,6 +15,19 @@
   (keydown.shift.enter)="pressEnterNote($event)"
   (keydown.backspace)="pressBackspaceNote($event)"
   [style.opacity]="touch.doAction ? '0.5' : '1'"
+></textarea> -->
+
+<textarea
+  #textareaRef
+  class="value"
+  autocorrect="off"
+  autocapitalize="off"
+  spellcheck="false"
+  maxlength="100"
+  [style.opacity]="touch.doDelete ? '0.5' : '1'"
+  [value]="value"
+  (input)="onInput($event)"
+  (keydown)="onKeydown($event)"
 ></textarea>
 
 <svg

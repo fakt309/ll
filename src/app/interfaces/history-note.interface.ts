@@ -1,4 +1,4 @@
-export interface UpdateNote {
+export interface HistoryNote {
   id: number
   timestamp: number
   action: 'create' | 'delete' | 'changeValue' | 'changeStatus'

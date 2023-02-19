@@ -2,7 +2,7 @@
   <path d="M 5 10 C 5 10, 95 10, 95 10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="transparent"></path>
 </svg>-->
 
-<app-note
+<!-- <app-note
   *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
   [note]="note"
   [class.first]="isFirst"
@@ -13,6 +13,19 @@
   (onChange)="changeNoteValue($event)"
   (onDelete)="deleteNote($event)"
   (onFocus)="setFocusedNote($event)"
+></app-note> -->
+
+<app-note
+  *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
+  [id]="note.id"
+  [value]="note.value"
+  [class.first]="isFirst"
+  [class.last]="isLast"
+  [focus]="focusNote"
+  (onWasChangedValue)="onWasChangedValueNote($event)"
+  (onCreate)="onCreateNote($event)"
+  (onDelete)="onDeleteNote($event)"
+  (onMerge)="onMergeNote($event)"
 ></app-note>
 
 <div
