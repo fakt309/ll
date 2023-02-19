@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1676802654447,
+  "timestamp": 1676804906445,
   "index": "/ll/index.html",
   "assetGroups": [
     {
@@ -37,6 +37,7 @@
         "/ll/assets/icons/icon-512x512.png",
         "/ll/assets/icons/icon-72x72.png",
         "/ll/assets/icons/icon-96x96.png",
+        "/ll/assets/icons/logo.psd",
         "/ll/assets/refresh.png"
       ],
       "patterns": []
@@ -44,17 +45,18 @@
   ],
   "dataGroups": [],
   "hashTable": {
-    "/ll/assets/icons/icon-128x128.png": "93625b95c072ec7b35325eda02585c102ce985e2",
-    "/ll/assets/icons/icon-144x144.png": "b6b323cab429811931d6aa8259e5db1cd4391c7b",
-    "/ll/assets/icons/icon-152x152.png": "d3e230b955c50937ec259b45a85af141aca0ede8",
-    "/ll/assets/icons/icon-192x192.png": "9f6ea3194ef929572d4e2c8a7883667d8272176a",
-    "/ll/assets/icons/icon-384x384.png": "93d1a92c1ae85ec9af9441792a14059ba357cb3b",
-    "/ll/assets/icons/icon-512x512.png": "5b6201f463202c36e0cddccf94d6cb5dad53c369",
-    "/ll/assets/icons/icon-72x72.png": "a08252d608c01661b74e229f3feafba8e291112a",
-    "/ll/assets/icons/icon-96x96.png": "6a2336acc6b24252d888a8301aade4a43f970397",
+    "/ll/assets/icons/icon-128x128.png": "9b99f931fadcf48dbe141b93e0f6066d970cf6eb",
+    "/ll/assets/icons/icon-144x144.png": "aebfef23d2e3f0258cbc71de2105299c7d2f09c9",
+    "/ll/assets/icons/icon-152x152.png": "02de592016686a4d4dc413859dc1aa19d689fc03",
+    "/ll/assets/icons/icon-192x192.png": "592fb10728d2f4f4bde0085097df968b36cccb29",
+    "/ll/assets/icons/icon-384x384.png": "a4100060ba83302cf430efed89d3c3746254c0c2",
+    "/ll/assets/icons/icon-512x512.png": "60964cf6b956be01463739cbe5ffe9c81c788820",
+    "/ll/assets/icons/icon-72x72.png": "801010a80f1c36e3501ec7c63630947d2ac5ae65",
+    "/ll/assets/icons/icon-96x96.png": "4993965e2a8ddb622991cf27fc8b8e58f9ce9dca",
+    "/ll/assets/icons/logo.psd": "87d209166d245a7ee1078e1757f726cb726c2c0e",
     "/ll/assets/refresh.png": "4acaa6f24ce83ad7bea0abf316e1b96d3aa2a590",
     "/ll/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/ll/index.html": "1d626cd42aa162571a87029ea49a150a61fbf494",
+    "/ll/index.html": "7e59ef5f56d69e62f917254e3f5eaf53d9ee4f32",
     "/ll/main.b74637c25cf6e9aa.js": "aa71c7a3c05bae299b4c6e7266195455783376ce",
     "/ll/manifest.webmanifest": "c0fc51bee48898e936c9805c0e7f02b42ac3a3aa",
     "/ll/polyfills.1cfea0cbcc4c0310.js": "d85eea0d97983c84cd5a2892a64e20918034d191",
