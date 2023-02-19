@@ -329,10 +329,14 @@ export class ListNotesComponent implements OnInit {
     const baseNote = this.notes.find((n: Note) => n.id === data.fromId)
     if (!baseNote) return
 
+    this.focusNote.emit({
+      id: 0,
+      position: 0
+    })
     if (data.direction === 'prev') {
       const prevNote = this.notes[this.notes.indexOf(baseNote)-1]
       if (!prevNote) return
-      const focusPosition = baseNote.value.length
+      const focusPosition = prevNote.value.length
       prevNote.value += baseNote.value
       this.noteService.change(prevNote.id, { value: prevNote.value })
       this.notes.forEach((n: Note) => {
@@ -343,13 +347,13 @@ export class ListNotesComponent implements OnInit {
       })
       this.noteService.delete(baseNote.id)
       this.notes.splice(this.notes.indexOf(baseNote), 1)
+      this.sortNotes()
       setTimeout(() => {
         this.focusNote.emit({
           id: prevNote.id,
           position: focusPosition
         })
       }, 0)
-      console.log(this.notes)
     } else if (data.direction === 'next') {
       const nextNote = this.notes[this.notes.indexOf(baseNote)+1]
       if (!nextNote) return
@@ -364,6 +368,7 @@ export class ListNotesComponent implements OnInit {
       })
       this.noteService.delete(nextNote.id)
       this.notes.splice(this.notes.indexOf(nextNote), 1)
+      this.sortNotes()
       setTimeout(() => {
         this.focusNote.emit({
           id: baseNote.id,
@@ -371,8 +376,6 @@ export class ListNotesComponent implements OnInit {
         })
       }, 0)
     }
-
-    console.log(this.notes)
 
     // const notes = this.sortedNotes()
     // const note = notes.find((n: Note) => n.id === data.id)
