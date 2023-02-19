@@ -34,8 +34,8 @@
     background: #ffffff33;
   }
 
-  .value.disabled {
-    filter: blur(1px);
+  .value_disabled {
+    opacity: 0.7;
   }
 
   .svg {
