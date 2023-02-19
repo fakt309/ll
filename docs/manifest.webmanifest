@@ -1,8 +1,8 @@
 {
-  "name": "ll",
-  "short_name": "ll",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "write down my life",
+  "short_name": "write",
+  "theme_color": "#473C33",
+  "background_color": "#473C33",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
