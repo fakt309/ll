@@ -2,7 +2,7 @@
   *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
   [id]="note.id"
   [blur]="noteIdInFocus !== null && noteIdInFocus !== note.id"
-  [disable]="showDrag || (noteIdInFocus !== null && noteIdInFocus !== note.id)"
+  [disable]="showDrag"
   [value]="note.value"
   [attr.idnote]="note.id"
   class="note"

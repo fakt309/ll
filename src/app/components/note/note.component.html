@@ -26,7 +26,7 @@
   maxlength="100"
   [style.opacity]="touch.doDelete || timer.action === 'successDelete' || timer.action === 'cancelDelete' || blur ? '0.5' : '1'"
   [value]="value"
-  [disabled]="disable"
+  [disabled]="disable || timer.action === 'successDelete' || timer.action === 'cancelDelete'"
   [style.user-select]="disable ? 'none' : 'text'"
   (input)="onInput($event)"
   (keydown)="onKeydown($event)"

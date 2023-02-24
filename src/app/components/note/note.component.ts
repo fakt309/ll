@@ -156,6 +156,8 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.touch.doDelete = false
       }
     } else if (this.timer.action === 'successDelete') {
+      e.preventDefault()
+      e.stopPropagation()
       if (this.touch.firstMove) {
         this.timer.action = ''
         this.touch.startX = 0
@@ -195,6 +197,8 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.startTimer(2)
       }
     } else if (this.timer.action === 'cancelDelete') {
+      e.preventDefault()
+      e.stopPropagation()
       if (this.touch.firstMove) {
         this.timer.action = ''
         this.touch.startX = 0

@@ -245,9 +245,7 @@ export class ListNotesComponent implements OnInit {
         this.noteIdInFocus = nextNote.id
       }
     } else {
-      setTimeout(() => {
-        this.noteIdInFocus = null
-      }, 0)
+      this.noteIdInFocus = null
     }
   }
 
