@@ -24,15 +24,19 @@
   autocapitalize="off"
   spellcheck="false"
   maxlength="100"
-  [style.opacity]="touch.doDelete ? '0.5' : '1'"
+  [style.opacity]="touch.doDelete || timer.action === 'successDelete' || timer.action === 'cancelDelete' || blur ? '0.5' : '1'"
   [value]="value"
+  [disabled]="disable"
+  [style.user-select]="disable ? 'none' : 'text'"
   (input)="onInput($event)"
   (keydown)="onKeydown($event)"
+  (focus)="onFocus.emit({ id: id, in: true, direction: 'current' })"
+  (blur)="onFocus.emit({ id: id, in: false })"
 ></textarea>
 
 <svg
   #svgRef
-  *ngIf="touch.canDraw"
+  *ngIf="touch.canDraw || timer.action === 'successDelete' || timer.action === 'cancelDelete'"
   class="svg"
   [attr.viewBox]="touch.viewBox[0]+' '+touch.viewBox[1]+' '+touch.viewBox[2]+' '+touch.viewBox[3]"
   xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +45,29 @@
     class="first-line"
     [attr.d]="getStringPath(touch.pathD)"
     stroke="#ffffff"
-    stroke-width="4"
+    stroke-width="2"
     stroke-linecap="round"
     fill="transparent"></path>
+  <path
+    class="second-line"
+    [attr.d]="getStringPath(touch.pathD2)"
+    stroke="#ffffff"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="transparent"></path>
+
+  <circle
+    [hidden]="!timer.show"
+    [attr.cx]="timer.show ? timer.x : -1000"
+    [attr.cy]="timer.show ? timer.y-1 : -1000"
+    r="10"
+    fill="#ffffff" />
+  <text
+    [hidden]="!timer.show"
+    [attr.x]="timer.show ? timer.x : -1000"
+    [attr.y]="timer.show ? timer.y : -1000"
+    class="timer"
+    dominant-baseline="middle"
+    text-anchor="middle"
+    >{{ timer.value }}</text>
 </svg>

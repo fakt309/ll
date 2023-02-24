@@ -1,24 +1,11 @@
-<!--<svg #svg class="" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
-  <path d="M 5 10 C 5 10, 95 10, 95 10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="transparent"></path>
-</svg>-->
-
-<!-- <app-note
-  *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
-  [note]="note"
-  [class.first]="isFirst"
-  [class.last]="isLast"
-  [focus]="focusNote"
-  [disabled]="focusedNote == null || focusedNote === note ? false : true"
-  (onCreate)="createNote($event)"
-  (onChange)="changeNoteValue($event)"
-  (onDelete)="deleteNote($event)"
-  (onFocus)="setFocusedNote($event)"
-></app-note> -->
-
 <app-note
   *ngFor="let note of notes; first as isFirst; last as isLast; trackBy: trackNote"
   [id]="note.id"
+  [blur]="noteIdInFocus !== null && noteIdInFocus !== note.id"
+  [disable]="showDrag || (noteIdInFocus !== null && noteIdInFocus !== note.id)"
   [value]="note.value"
+  [attr.idnote]="note.id"
+  class="note"
   [class.first]="isFirst"
   [class.last]="isLast"
   [focus]="focusNote"
@@ -26,6 +13,11 @@
   (onCreate)="onCreateNote($event)"
   (onDelete)="onDeleteNote($event)"
   (onMerge)="onMergeNote($event)"
+  (onFocus)="onFocusNote($event)"
+  (touchstart)="onTouchstartNote($event)"
+  (touchmove)="onTouchmoveNote($event)"
+  (touchend)="onTouchendNote($event)"
+  (touchcancel)="onTouchendNote($event)"
 ></app-note>
 
 <div

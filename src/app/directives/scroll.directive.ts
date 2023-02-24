@@ -101,6 +101,11 @@ export class ScrollDirective implements AfterViewInit {
       }, 10)
     } else {
       refresh!.style.height = height+'px'
+      // refresh!.style.transform = `translateY(${-100+200*(height/this.maxRefreshHeight)}px)`
+      // const icon: any = refresh.querySelector('.scroll-refresh__icon')
+      // const text: any = refresh.querySelector('.scroll-refresh__text')
+      // icon.style.opacity = `${height/this.maxRefreshHeight}`
+      // text.style.opacity = `${height/this.maxRefreshHeight}`
     }
 
     this.prevHeightRefresh = height
@@ -139,19 +144,19 @@ export class ScrollDirective implements AfterViewInit {
     refresh.style.position = 'absolute'
     refresh.style.width = 'inherit'
     refresh.style.height = '0px'
-    refresh.style.backgroundColor = '#00000022'
+    // refresh.style.backgroundColor = '#00000022'
     refresh.style.display = 'flex'
     refresh.style.flexDirection = 'row'
-    refresh.style.alignItems = 'center'
+    refresh.style.alignItems = 'flex-end'
     refresh.style.justifyContent = 'center'
     refresh.style.overflow = 'hidden'
-    refresh.style.boxShadow = 'inset 0px 0px 5px #00000033'
+    // refresh.style.boxShadow = 'inset 0px 0px 5px #00000033'
     const refreshIcon = document.createElement('div')
     refreshIcon.classList.add('scroll-refresh__icon')
     refreshIcon.style.margin = '10px'
     refreshIcon.style.width = '30px'
     refreshIcon.style.height = '30px'
-    refreshIcon.style.backgroundImage = 'url(assets/refresh.png)'
+    refreshIcon.style.backgroundImage = 'url(assets/refresh.svg)'
     refreshIcon.style.backgroundPosition = 'center'
     refreshIcon.style.backgroundSize = 'contain'
     refreshIcon.style.backgroundRepeat = 'no-repeat'
@@ -159,8 +164,9 @@ export class ScrollDirective implements AfterViewInit {
     const refreshText = document.createElement('div')
     refreshText.classList.add('scroll-refresh__text')
     refreshText.style.color = '#ffffff'
-    refreshText.style.fontFamily = '"Ubuntu", sans-serif'
+    refreshText.style.fontFamily = '"Noto Sans", sans-serif'
     refreshText.style.fontSize = '14px'
+    refreshText.style.marginBottom = '15px'
     refreshText.innerHTML = 'refresh'
     refresh.append(refreshText)
 
