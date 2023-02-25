@@ -1,0 +1,11 @@
+<div class="sidebar-icon"></div>
+<div
+  class="sidebar-content"
+  appScroll
+  [appScrollConfig]="{ refreshable: false }"
+  [doScrollToStart]="doScrollToStart">
+    <div *ngFor="let option of options" class="sidebar-option">
+      <div class="sidebar-option__icon" [style.background-image]="'url('+option.icon+')'"></div>
+      <div class="sidebar-option__text">{{ option.text }}</div>
+    </div>
+</div>

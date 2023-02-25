@@ -9,6 +9,7 @@ import { ListNotesComponent } from './components/list-notes/list-notes.component
 import { ScrollDirective } from './directives/scroll.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 const routes: Routes = [
   { path: '', component: PageHomeComponent }
@@ -20,7 +21,8 @@ const routes: Routes = [
     PageHomeComponent,
     NoteComponent,
     ListNotesComponent,
-    ScrollDirective
+    ScrollDirective,
+    SidebarComponent
   ],
   imports: [
     RouterModule.forRoot(routes),

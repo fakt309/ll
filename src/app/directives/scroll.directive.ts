@@ -1,11 +1,15 @@
-import { Directive, ElementRef, Input, AfterViewInit, HostListener } from '@angular/core'
+import { Directive, ElementRef, Input, AfterViewInit, HostListener, OnDestroy, OnInit, EventEmitter } from '@angular/core'
+import { Subscription } from 'rxjs'
 
 @Directive({
   selector: '[appScroll]'
 })
-export class ScrollDirective implements AfterViewInit {
+export class ScrollDirective implements AfterViewInit, OnInit, OnDestroy {
 
   @Input('appScrollConfig') config: { refreshable: boolean } = { refreshable: false }
+  @Input() doScrollToStart: EventEmitter<void> = new EventEmitter<void>()
+
+  subs: Array<Subscription> = []
 
   private protrusion: number = 50
   private maxRefreshHeight: number = 50
@@ -213,10 +217,21 @@ export class ScrollDirective implements AfterViewInit {
     }, 10)
   }
 
+  ngOnInit(): void {
+    this.subs.push(
+      this.doScrollToStart.subscribe(() => {
+        this.scrollToStart()
+      })
+    )
+  }
+
   ngAfterViewInit(): void {
     this.generate()
     this.scrollToStart()
+  }
 
+  ngOnDestroy(): void {
+    this.subs.forEach((sub: Subscription) => sub.unsubscribe())
   }
 
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core'
+import { SidebarOption } from '../sidebar/sidebar.component'
 
 @Component({
   selector: 'app-page-home',
@@ -6,6 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./page-home.component.scss']
 })
 export class PageHomeComponent implements OnInit {
+
+  navigation: Array<SidebarOption> = [
+    { value: 'changeTime', icon: 'assets/changeTime.svg', text: 'change life time' },
+    { value: 'changeTime', icon: 'assets/changeStage.svg', text: 'change life stage' },
+    { value: 'history', icon: 'assets/history.svg', text: 'history' },
+    { value: 'synchronization', icon: 'assets/synchronization.svg', text: 'synchronization' },
+    { value: 'installPwa', icon: 'assets/install.svg', text: 'install app' }
+  ]
 
   constructor() { }
 
