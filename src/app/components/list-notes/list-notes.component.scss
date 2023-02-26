@@ -9,4 +9,10 @@
     color: #ffffff66;
     font-weight: 100;
   }
+
+  .note.dragging {
+    transition-property: margin;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+  }
 }

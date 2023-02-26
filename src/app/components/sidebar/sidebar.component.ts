@@ -78,8 +78,8 @@ export class SidebarComponent implements OnInit {
     clearTimeout(this.touch.timeoutSpeed)
     this.touch.timeoutSpeed = setTimeout(() => {
       this.touch.speed = 0
-    }, 100)
-    this.touch.speed = this.touch.startX-this.touch.prevX
+    }, 200)
+    this.touch.speed = x-this.touch.prevX
 
     let pos = this.touch.startPositionMenu+x-this.touch.startX
     if (pos > 0) pos = 0
@@ -105,9 +105,9 @@ export class SidebarComponent implements OnInit {
       } else {
         this.animateMenu('hide')
       }
-    } else if (this.touch.speed < 0) {
-      this.animateMenu('hide')
     } else if (this.touch.speed > 0) {
+      this.animateMenu('hide')
+    } else if (this.touch.speed < 0) {
       this.animateMenu('show')
     }
   }

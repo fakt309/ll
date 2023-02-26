@@ -13,7 +13,8 @@ export class PageHomeComponent implements OnInit {
     { value: 'changeTime', icon: 'assets/changeStage.svg', text: 'change life stage' },
     { value: 'history', icon: 'assets/history.svg', text: 'history' },
     { value: 'synchronization', icon: 'assets/synchronization.svg', text: 'synchronization' },
-    { value: 'installPwa', icon: 'assets/install.svg', text: 'install app' }
+    { value: 'installPwa', icon: 'assets/install.svg', text: 'install app' },
+    { value: 'author', icon: 'assets/install.svg', text: 'about the author' }
   ]
 
   constructor() { }

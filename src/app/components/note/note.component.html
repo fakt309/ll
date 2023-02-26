@@ -1,22 +1,3 @@
-<!-- <textarea
-  #textareaRef
-  class="value"
-  [value]="note.value"
-  autocorrect="off"
-  autocapitalize="off"
-  spellcheck="false"
-  rows="1"
-  maxlength="100"
-  [class.disabled]="disabled"
-  (focus)="onFocus.emit({ note: note, in: true, e: $event })"
-  (focusout)="onFocus.emit({ note: note, in: false, e: $event })"
-  (input)="onInput($event)"
-  (keydown.enter)="pressEnterNote($event)"
-  (keydown.shift.enter)="pressEnterNote($event)"
-  (keydown.backspace)="pressBackspaceNote($event)"
-  [style.opacity]="touch.doAction ? '0.5' : '1'"
-></textarea> -->
-
 <textarea
   #textareaRef
   class="value"
@@ -71,3 +52,5 @@
     text-anchor="middle"
     >{{ timer.value }}</text>
 </svg>
+
+<div [hidden]="checkActive()" class="glass" (click)="focusAtTheEnd()"></div>

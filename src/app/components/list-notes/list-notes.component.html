@@ -8,6 +8,7 @@
   class="note"
   [class.first]="isFirst"
   [class.last]="isLast"
+  [class.dragging]="showDrag"
   [focus]="focusNote"
   (onWasChangedValue)="onWasChangedValueNote($event)"
   (onCreate)="onCreateNote($event)"

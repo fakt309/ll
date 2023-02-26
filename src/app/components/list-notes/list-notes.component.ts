@@ -257,6 +257,51 @@ export class ListNotesComponent implements OnInit {
       return 'note'+note.id;
   }
 
+  setMarginDrag(): void {
+    this.focusNote.emit({ id: 0, position: 0 })
+    if (this.touch.down) {
+      const speed = (this.touch.currentY-this.touch.startY)*0.02
+      this.host.nativeElement.scrollTop += speed
+
+      const notesElements: Array<any> = Array.from(this.host.nativeElement.querySelectorAll('app-note'))
+      const rectDragging = this.touch.element.getBoundingClientRect()
+
+      notesElements.splice(Array.from(notesElements).indexOf(this.touch.element), 1)
+
+      let index: number = 0
+      for (let i = 0; i < notesElements.length; i++) {
+        let prevEl: any = notesElements[i-1] || null
+        if (prevEl) prevEl = prevEl.getBoundingClientRect()
+
+        let currEl: any = notesElements[i] || null
+        if (currEl) currEl = currEl.getBoundingClientRect()
+
+        if (prevEl !== null && currEl !== null && rectDragging.y >= prevEl.y && rectDragging.y <= currEl.y) {
+          index = i
+          break
+        } else  if (prevEl === null && rectDragging.y <= currEl.y) {
+          index = i
+          break
+        } else if (i === notesElements.length-1 && rectDragging.y >= currEl.y) {
+          index = i+1
+          break
+        }
+      }
+
+      notesElements.forEach((el: any) => {
+        el.style.marginBottom = 0+'px'
+        el.style.marginTop = 0+'px'
+      })
+
+      if (index === notesElements.length) {
+        notesElements[notesElements.length-1].style.marginBottom = rectDragging.height+'px'
+      } else if (notesElements[index]) {
+        notesElements[index].style.marginTop = rectDragging.height+'px'
+      }
+      this.touch.indexDrag = index
+    }
+  }
+
   onTouchstartNote(e: any): void {
     const { x, y } = this.getCoordFromTouch(e)
     this.touch.down = true
@@ -277,8 +322,8 @@ export class ListNotesComponent implements OnInit {
     this.touch.currentY = y
     this.touch.firstMove = true
     this.timerDrag = setTimeout(() => {
-      if (this.touch.down && this.touch.firstMove) {
-        this.showDrag = true
+      const activeElement: any = document.activeElement
+      if (this.touch.down && this.touch.firstMove && activeElement !== this.touch.element.querySelector('textarea')) {
         this.focusNote.emit({ id: 0, position: 0 })
         this.host.nativeElement.style.overflowY = 'hidden'
         this.touch.element.style.position = 'absolute'
@@ -287,38 +332,10 @@ export class ListNotesComponent implements OnInit {
         this.touch.element.style.backdropFilter = 'blur(2px)'
         this.touch.element.style.left = `0px`
         this.touch.element.style.top = `${this.touch.startY-this.touch.startDY}px`
+        this.setMarginDrag()
         this.touch.interval = setInterval(() => {
-          if (this.touch.down) {
-            const speed = (this.touch.currentY-this.touch.startY)*0.03
-            this.host.nativeElement.scrollTop += speed
-            const notesElements = this.host.nativeElement.querySelectorAll('app-note')
-            let minEl: any = null
-            notesElements.forEach((el: any) => {
-              if (el === this.touch.element) return
-              el.style.marginTop = '0px'
-              if (minEl === null) minEl = el
-              const rect1 = minEl.getBoundingClientRect()
-              const rect2 = el.getBoundingClientRect()
-              if (Math.abs(this.touch.currentY-(rect1.y+rect1.height/2)) > Math.abs(this.touch.currentY-(rect2.y+rect2.height/2))) {
-                minEl = el
-              }
-            })
-
-            const rectDragging = this.touch.element.getBoundingClientRect()
-            if (minEl === notesElements[notesElements.length-1]) {
-              const rect = minEl.getBoundingClientRect()
-              if (this.touch.currentY > rect.y+rect.height/2) {
-                minEl.style.marginBottom = `${rectDragging.height}px`
-                this.touch.indexDrag = 'last'
-              } else {
-                minEl.style.marginTop = `${rectDragging.height}px`
-                this.touch.indexDrag = minEl.getAttribute('idnote')
-              }
-            } else {
-              minEl.style.marginTop = `${rectDragging.height}px`
-              this.touch.indexDrag = minEl.getAttribute('idnote')
-            }
-          }
+          this.showDrag = true
+          this.setMarginDrag()
         }, 10)
       }
     }, 200)
@@ -336,41 +353,52 @@ export class ListNotesComponent implements OnInit {
   onTouchendNote(e: any): void {
     clearTimeout(this.timerDrag)
     if (!this.showDrag) return
-    const dragginNote =  this.notes.find((n: Note) => n.id === parseInt(this.touch.element.getAttribute('idnote')))
+    const dragginNote = this.notes.find((n: Note) => n.id === parseInt(this.touch.element.getAttribute('idnote')))
     if (!dragginNote) return
-    if (this.touch.indexDrag === 'last') {
-      let maxPriority = 0
-      this.notes.forEach((n: Note) => {
-        if (n.priority > dragginNote.priority) {
-          n.priority--
-          this.noteService.change(n.id, { priority: n.priority })
-        }
-        if (n.priority > maxPriority) maxPriority = n.priority
-      })
-      dragginNote.priority = maxPriority+1
-      this.noteService.change(dragginNote.id, { priority: dragginNote.priority })
-      this.sortNotes()
-    } else {
-      const insertNote =  this.notes.find((n: Note) => n.id === parseInt(this.touch.indexDrag))
-      if (!insertNote) return
-      this.notes.forEach((n: Note) => {
-        if (n.priority > dragginNote.priority && n.id !== dragginNote.id && n.id !== insertNote.id) {
-          n.priority--
-          this.noteService.change(n.id, { priority: n.priority })
-        }
-      })
-      this.notes.forEach((n: Note) => {
-        if (n.priority >= insertNote.priority && n.id !== dragginNote.id && n.id !== insertNote.id) {
-          n.priority++
-          this.noteService.change(n.id, { priority: n.priority })
-        }
-      })
-      insertNote.priority++
-      this.noteService.change(insertNote.id, { priority: insertNote.priority })
-      dragginNote.priority = insertNote.priority-1
-      this.noteService.change(dragginNote.id, { priority: dragginNote.priority })
-      this.sortNotes()
+
+    this.notes.splice(this.notes.indexOf(dragginNote), 1)
+    this.notes.splice(this.touch.indexDrag, 0, dragginNote)
+
+    for (let i = 0; i < this.notes.length; i++) {
+      this.notes[i].priority = i
+      this.noteService.change(this.notes[i].id, { priority: i })
     }
+
+    // console.log(this.notes)
+    // console.log(this.touch.indexDrag)
+    // if (this.touch.indexDrag === 'last') {
+    //   let maxPriority = 0
+    //   this.notes.forEach((n: Note) => {
+    //     if (n.priority > dragginNote.priority) {
+    //       n.priority--
+    //       this.noteService.change(n.id, { priority: n.priority })
+    //     }
+    //     if (n.priority > maxPriority) maxPriority = n.priority
+    //   })
+    //   dragginNote.priority = maxPriority+1
+    //   this.noteService.change(dragginNote.id, { priority: dragginNote.priority })
+    //   this.sortNotes()
+    // } else {
+    //   const insertNote =  this.notes.find((n: Note) => n.id === parseInt(this.touch.indexDrag))
+    //   if (!insertNote) return
+    //   this.notes.forEach((n: Note) => {
+    //     if (n.priority > dragginNote.priority && n.id !== dragginNote.id && n.id !== insertNote.id) {
+    //       n.priority--
+    //       this.noteService.change(n.id, { priority: n.priority })
+    //     }
+    //   })
+    //   this.notes.forEach((n: Note) => {
+    //     if (n.priority >= insertNote.priority && n.id !== dragginNote.id && n.id !== insertNote.id) {
+    //       n.priority++
+    //       this.noteService.change(n.id, { priority: n.priority })
+    //     }
+    //   })
+    //   insertNote.priority++
+    //   this.noteService.change(insertNote.id, { priority: insertNote.priority })
+    //   dragginNote.priority = insertNote.priority-1
+    //   this.noteService.change(dragginNote.id, { priority: dragginNote.priority })
+    //   this.sortNotes()
+    // }
 
     const notesElements = this.host.nativeElement.querySelectorAll('app-note')
     notesElements.forEach((el: any) => {

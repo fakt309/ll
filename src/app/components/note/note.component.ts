@@ -241,6 +241,10 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 1000)
   }
 
+  checkActive(): boolean {
+    return document.activeElement === this.textareaRef?.nativeElement || false
+  }
+
   cancelTimer(): void {
     clearInterval(this.timer.interval)
     this.timer.show = false
@@ -430,6 +434,12 @@ export class NoteComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       })
     )
+  }
+
+  focusAtTheEnd(): void {
+    this.textareaRef.nativeElement.focus()
+    this.textareaRef.nativeElement.selectionStart = this.textareaRef.nativeElement.value.length
+    this.textareaRef.nativeElement.selectionEnd = this.textareaRef.nativeElement.value.length
   }
 
   ngAfterViewInit(): void {
